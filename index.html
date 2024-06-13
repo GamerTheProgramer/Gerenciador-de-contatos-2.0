@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Contatos</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .container {
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+        max-width: 600px;
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .container.loaded {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+
+      .container.loaded h1 {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      form label {
+        width: 100%;
+        font-weight: bold;
+      }
+
+      form input {
+        width: calc(100% - 8px);
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      form button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      form button:hover {
+        background-color: #45a049;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid #ccc;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      td.actions {
+        text-align: center;
+      }
+
+      .btn {
+        padding: 8px 12px;
+        background-color: #f44336;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        border-radius: 4px;
+      }
+
+      .btn-edit {
+        background-color: #2196F3;
+      }
+
+      .btn:hover,
+      .btn-edit:hover {
+        opacity: 0.9;
+      }
+
+      /* Animação de fade-in para nova linha adicionada */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+
+        to {
+          opacity: 1;
+        }
+      }
+
+      .fadeIn {
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      /* Animação de fade-out para linha excluída */
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+
+        to {
+          opacity: 0;
+          height: 0;
+          padding: 0;
+          border: none;
+        }
+      }
+
+      .fadeOut {
+        animation: fadeOut 0.5s ease-in-out forwards;
+      }
+
+      /* Animação de entrada para o container principal */
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .container {
+        animation: slideIn 0.5s ease-in-out forwards;
+      }
+
+      /* Animação de entrada para o título */
+      @keyframes fadeInTitle {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      h1 {
+        animation: fadeInTitle 0.5s ease-in-out forwards;
+      }
+
+      /* Botão de pesquisa */
+      .search-button {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #007BFF;
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .search-button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+    <script type="text/javascript" src="./index.js" defer=""></script>
+    <link rel="stylesheet" href="./index.css">
+  </head>
+
+  <body>
+    <button class="search-button">🔍</button>
+
+    <div class="container" id="mainContainer">
+      <h1>Gerenciador de Contatos</h1>
+
+      <!-- Formulário para adicionar novo contato -->
+      <form id="addContactForm">
+        <label for="name">Nome:</label>
+        <input type="text" id="name" name="name" required="">
+        <label for="phone">Telefone:</label>
+        <input type="tel" id="phone" name="phone" required="">
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" name="email">
+        <button type="submit" class="btn">Adicionar Contato</button>
+      </form>
+
+      <!-- Tabela para mostrar lista de contatos -->
+      <table id="contactList">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Telefone</th>
+            <th>E-mail</th>
+            <th class="actions">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Linhas de contatos serão inseridas dinamicamente aqui -->
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      // Função para adicionar um novo contato
+      function addContact(event) {
+        event.preventDefault();
+
+        // Captura os valores do formulário
+        var name = document.getElementById('name').value;
+        var phone = document.getElementById('phone').value;
+        var email = document.getElementById('email').value;
+
+        // Cria uma nova linha na tabela com os dados do novo contato
+        var newRow = document.createElement('tr');
+        newRow.innerHTML = `
+                <td>${name}</td>
+                <td>${phone}</td>
+                <td>${email}</td>
+                <td class="actions">
+                    <button class="btn btn-edit" onclick="editContact(this)">Editar</button>
+                    <button class="btn btn-delete" onclick="deleteContact(this)">Excluir</button>
+                </td>
+            `;
+
+        // Adiciona classe para iniciar a animação de fade-in
+        newRow.classList.add('fadeIn');
+
+        // Adiciona a nova linha à tabela
+        var contactList = document.querySelector('#contactList tbody');
+        contactList.appendChild(newRow);
+
+        // Limpa os campos do formulário após adicionar o contato
+        document.getElementById('addContactForm').reset();
+      }
+
+      // Função para editar um contato
+      function editContact(btn) {
+        var row = btn.closest('tr');
+        var cells = row.querySelectorAll('td');
+
+        // Preenche o formulário com os dados do contato selecionado
+        document.getElementById('name').value = cells[0].innerText;
+        document.getElementById('phone').value = cells[1].innerText;
+        document.getElementById('email').value = cells[2].innerText;
+
+        // Remove o contato da tabela após preencher o formulário
+        row.remove();
+      }
+
+      // Função para excluir um contato
+      function deleteContact(btn) {
+        var rowToDelete = btn.closest('tr');
+
+        // Adiciona classe para iniciar a animação de fade-out
+        rowToDelete.classList.add('fadeOut');
+
+        // Remove a linha da tabela após a animação de fade-out
+        setTimeout(function() {
+          rowToDelete.remove();
+        }, 500); // Tempo deve ser igual ao tempo da animação em milissegundos (0.5s = 500ms)
+      }
+
+      // Mostra o container após a animação de entrada
+      document.addEventListener('DOMContentLoaded', function() {
+        var container = document.getElementById('mainContainer');
+        container.classList.add('loaded');
+      });
+
+      // Adiciona evento de envio ao formulário
+      document.getElementById('addContactForm').addEventListener('submit', addContact);
+    </script>
+
+  </body>
+
+</html>

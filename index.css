@@ -1,0 +1,37 @@
+/* Estilos para o body */
+body {
+    /* Torna o body ocupar toda a altura da viewport */
+    min-height: 100vh;
+    margin: 0;
+    /* Define a imagem como plano de fundo */
+    background-image: url('https://s32907.pcdn.co/wp-content/uploads/2019/09/escrit%C3%B3rios-pequenos-21.png');
+    /* Ajusta a posição da imagem (centro, topo) */
+    background-position: center top;
+    /* Ajusta o tamanho da imagem (cover para cobrir todo o corpo) */
+    background-size: cover;
+    /* Define que a imagem de fundo deve rolar com a página */
+    background-attachment: fixed;
+    /* Define a cor de sobreposição escura com pseudo-elemento */
+    position: relative;
+    z-index: 1;
+}
+
+/* Pseudo-elemento para criar a sobreposição escura */
+body::before {
+    content: '';
+    background: rgba(0, 0, 0, 0.7); /* Cor escura com mais transparência */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Coloca o pseudo-elemento atrás do conteúdo do body */
+}
+
+/* Conteúdo do site */
+.content {
+    position: relative;
+    z-index: 2; /* Garante que o conteúdo apareça acima do pseudo-elemento */
+    color: white; /* Exemplo de cor para o texto, para contraste */
+    padding: 20px;
+}
