@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciador de Contatos</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <button class="search-button" id="searchButton" onclick="toggleSearchInput()">🔍</button>
+  <input type="text" class="search-input" id="searchInput" placeholder="Pesquisar..." onblur="hideSearchInput()">
+  
+  <div class="container" id="mainContainer">
+    <h1>Gerenciador de Contatos</h1>
+
+    <!-- Formulário para adicionar novo contato -->
+    <form id="addContactForm">
+      <label for="name">Nome:</label>
+      <input type="text" id="name" name="name" required>
+      <label for="phone">Telefone:</label>
+      <input type="tel" id="phone" name="phone" required>
+      <label for="email">E-mail:</label>
+      <input type="email" id="email" name="email">
+      <button type="submit" class="btn">Adicionar Contato</button>
+    </form>
+
+    <!-- Tabela para mostrar lista de contatos -->
+    <table id="contactList">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Telefone</th>
+          <th>E-mail</th>
+          <th class="actions">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Linhas de contatos serão inseridas dinamicamente aqui -->
+      </tbody>
+    </table>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+
+</html>
